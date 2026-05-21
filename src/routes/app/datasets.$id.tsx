@@ -70,13 +70,13 @@ function DatasetDetail() {
           </div>
         )}
         <div className="space-y-3">
-          {(insights.data?.insights ?? []).map((i: { id?: string; title: string; body: string; severity: string }, idx: number) => (
-            <div key={i.id ?? idx} className="rounded-xl border border-glass-border bg-white/[0.02] p-4">
+          {(insights.data?.insights ?? []).map((i, idx: number) => (
+            <div key={idx} className="rounded-xl border border-glass-border bg-white/[0.02] p-4">
               <div className="flex items-center gap-2">
                 <span className={`h-2 w-2 rounded-full ${i.severity === "high" ? "bg-destructive" : i.severity === "warn" ? "bg-yellow-400" : "bg-primary"}`} />
                 <div className="font-medium text-sm">{i.title}</div>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">{i.body}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{i.body ?? ""}</p>
             </div>
           ))}
           {!insights.data?.insights.length && (
