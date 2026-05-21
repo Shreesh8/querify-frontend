@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Database } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/datasets")({
+export const Route = createFileRoute("/app/datasets")({
   component: DatasetsLayout,
 });
 

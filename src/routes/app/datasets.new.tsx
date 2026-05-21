@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Upload, FileSpreadsheet, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/datasets/new")({
+export const Route = createFileRoute("/app/datasets/new")({
   component: NewDatasetPage,
 });
 

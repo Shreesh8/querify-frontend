@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Database, MessageSquare, TrendingUp, Plus, Sparkles, ArrowUpRight } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/")({
+export const Route = createFileRoute("/app/")({
   component: OverviewPage,
 });
 
