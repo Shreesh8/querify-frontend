@@ -9,38 +9,184 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppForecastRouteImport } from './routes/app/forecast'
+import { Route as AppDatasetsRouteImport } from './routes/app/datasets'
+import { Route as AppDashboardsRouteImport } from './routes/app/dashboards'
+import { Route as AppChatRouteImport } from './routes/app/chat'
+import { Route as AppDatasetsNewRouteImport } from './routes/app/datasets.new'
+import { Route as AppDatasetsIdRouteImport } from './routes/app/datasets.$id'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppForecastRoute = AppForecastRouteImport.update({
+  id: '/forecast',
+  path: '/forecast',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDatasetsRoute = AppDatasetsRouteImport.update({
+  id: '/datasets',
+  path: '/datasets',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDashboardsRoute = AppDashboardsRouteImport.update({
+  id: '/dashboards',
+  path: '/dashboards',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppChatRoute = AppChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDatasetsNewRoute = AppDatasetsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppDatasetsRoute,
+} as any)
+const AppDatasetsIdRoute = AppDatasetsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppDatasetsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/app/chat': typeof AppChatRoute
+  '/app/dashboards': typeof AppDashboardsRoute
+  '/app/datasets': typeof AppDatasetsRouteWithChildren
+  '/app/forecast': typeof AppForecastRoute
+  '/app/': typeof AppIndexRoute
+  '/app/datasets/$id': typeof AppDatasetsIdRoute
+  '/app/datasets/new': typeof AppDatasetsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/app/chat': typeof AppChatRoute
+  '/app/dashboards': typeof AppDashboardsRoute
+  '/app/datasets': typeof AppDatasetsRouteWithChildren
+  '/app/forecast': typeof AppForecastRoute
+  '/app': typeof AppIndexRoute
+  '/app/datasets/$id': typeof AppDatasetsIdRoute
+  '/app/datasets/new': typeof AppDatasetsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/app/chat': typeof AppChatRoute
+  '/app/dashboards': typeof AppDashboardsRoute
+  '/app/datasets': typeof AppDatasetsRouteWithChildren
+  '/app/forecast': typeof AppForecastRoute
+  '/app/': typeof AppIndexRoute
+  '/app/datasets/$id': typeof AppDatasetsIdRoute
+  '/app/datasets/new': typeof AppDatasetsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/login'
+    | '/signup'
+    | '/app/chat'
+    | '/app/dashboards'
+    | '/app/datasets'
+    | '/app/forecast'
+    | '/app/'
+    | '/app/datasets/$id'
+    | '/app/datasets/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/app/chat'
+    | '/app/dashboards'
+    | '/app/datasets'
+    | '/app/forecast'
+    | '/app'
+    | '/app/datasets/$id'
+    | '/app/datasets/new'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/login'
+    | '/signup'
+    | '/app/chat'
+    | '/app/dashboards'
+    | '/app/datasets'
+    | '/app/forecast'
+    | '/app/'
+    | '/app/datasets/$id'
+    | '/app/datasets/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,12 +194,106 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/forecast': {
+      id: '/app/forecast'
+      path: '/forecast'
+      fullPath: '/app/forecast'
+      preLoaderRoute: typeof AppForecastRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/datasets': {
+      id: '/app/datasets'
+      path: '/datasets'
+      fullPath: '/app/datasets'
+      preLoaderRoute: typeof AppDatasetsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/dashboards': {
+      id: '/app/dashboards'
+      path: '/dashboards'
+      fullPath: '/app/dashboards'
+      preLoaderRoute: typeof AppDashboardsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/chat': {
+      id: '/app/chat'
+      path: '/chat'
+      fullPath: '/app/chat'
+      preLoaderRoute: typeof AppChatRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/datasets/new': {
+      id: '/app/datasets/new'
+      path: '/new'
+      fullPath: '/app/datasets/new'
+      preLoaderRoute: typeof AppDatasetsNewRouteImport
+      parentRoute: typeof AppDatasetsRoute
+    }
+    '/app/datasets/$id': {
+      id: '/app/datasets/$id'
+      path: '/$id'
+      fullPath: '/app/datasets/$id'
+      preLoaderRoute: typeof AppDatasetsIdRouteImport
+      parentRoute: typeof AppDatasetsRoute
+    }
   }
 }
 
+interface AppDatasetsRouteChildren {
+  AppDatasetsIdRoute: typeof AppDatasetsIdRoute
+  AppDatasetsNewRoute: typeof AppDatasetsNewRoute
+}
+
+const AppDatasetsRouteChildren: AppDatasetsRouteChildren = {
+  AppDatasetsIdRoute: AppDatasetsIdRoute,
+  AppDatasetsNewRoute: AppDatasetsNewRoute,
+}
+
+const AppDatasetsRouteWithChildren = AppDatasetsRoute._addFileChildren(
+  AppDatasetsRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppChatRoute: typeof AppChatRoute
+  AppDashboardsRoute: typeof AppDashboardsRoute
+  AppDatasetsRoute: typeof AppDatasetsRouteWithChildren
+  AppForecastRoute: typeof AppForecastRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppChatRoute: AppChatRoute,
+  AppDashboardsRoute: AppDashboardsRoute,
+  AppDatasetsRoute: AppDatasetsRouteWithChildren,
+  AppForecastRoute: AppForecastRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
