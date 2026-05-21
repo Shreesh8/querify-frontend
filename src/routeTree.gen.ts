@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppDatasetsRouteImport } from './routes/app/datasets'
 import { Route as AppDatasetsNewRouteImport } from './routes/app/datasets.new'
+import { Route as AppDatasetsIdRouteImport } from './routes/app/datasets.$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -52,6 +53,11 @@ const AppDatasetsNewRoute = AppDatasetsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AppDatasetsRoute,
 } as any)
+const AppDatasetsIdRoute = AppDatasetsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppDatasetsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/app/datasets': typeof AppDatasetsRouteWithChildren
   '/app/': typeof AppIndexRoute
+  '/app/datasets/$id': typeof AppDatasetsIdRoute
   '/app/datasets/new': typeof AppDatasetsNewRoute
 }
 export interface FileRoutesByTo {
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/app/datasets': typeof AppDatasetsRouteWithChildren
   '/app': typeof AppIndexRoute
+  '/app/datasets/$id': typeof AppDatasetsIdRoute
   '/app/datasets/new': typeof AppDatasetsNewRoute
 }
 export interface FileRoutesById {
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/app/datasets': typeof AppDatasetsRouteWithChildren
   '/app/': typeof AppIndexRoute
+  '/app/datasets/$id': typeof AppDatasetsIdRoute
   '/app/datasets/new': typeof AppDatasetsNewRoute
 }
 export interface FileRouteTypes {
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/app/datasets'
     | '/app/'
+    | '/app/datasets/$id'
     | '/app/datasets/new'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/app/datasets'
     | '/app'
+    | '/app/datasets/$id'
     | '/app/datasets/new'
   id:
     | '__root__'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/app/datasets'
     | '/app/'
+    | '/app/datasets/$id'
     | '/app/datasets/new'
   fileRoutesById: FileRoutesById
 }
@@ -167,14 +179,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDatasetsNewRouteImport
       parentRoute: typeof AppDatasetsRoute
     }
+    '/app/datasets/$id': {
+      id: '/app/datasets/$id'
+      path: '/$id'
+      fullPath: '/app/datasets/$id'
+      preLoaderRoute: typeof AppDatasetsIdRouteImport
+      parentRoute: typeof AppDatasetsRoute
+    }
   }
 }
 
 interface AppDatasetsRouteChildren {
+  AppDatasetsIdRoute: typeof AppDatasetsIdRoute
   AppDatasetsNewRoute: typeof AppDatasetsNewRoute
 }
 
 const AppDatasetsRouteChildren: AppDatasetsRouteChildren = {
+  AppDatasetsIdRoute: AppDatasetsIdRoute,
   AppDatasetsNewRoute: AppDatasetsNewRoute,
 }
 
@@ -203,3 +224,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
