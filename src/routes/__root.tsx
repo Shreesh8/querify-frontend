@@ -9,6 +9,9 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
