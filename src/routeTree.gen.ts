@@ -15,6 +15,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppDatasetsRouteImport } from './routes/app/datasets'
+import { Route as AppChatRouteImport } from './routes/app/chat'
 import { Route as AppDatasetsNewRouteImport } from './routes/app/datasets.new'
 import { Route as AppDatasetsIdRouteImport } from './routes/app/datasets.$id'
 
@@ -48,6 +49,11 @@ const AppDatasetsRoute = AppDatasetsRouteImport.update({
   path: '/datasets',
   getParentRoute: () => AppRoute,
 } as any)
+const AppChatRoute = AppChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDatasetsNewRoute = AppDatasetsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/app/chat': typeof AppChatRoute
   '/app/datasets': typeof AppDatasetsRouteWithChildren
   '/app/': typeof AppIndexRoute
   '/app/datasets/$id': typeof AppDatasetsIdRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/app/chat': typeof AppChatRoute
   '/app/datasets': typeof AppDatasetsRouteWithChildren
   '/app': typeof AppIndexRoute
   '/app/datasets/$id': typeof AppDatasetsIdRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/app/chat': typeof AppChatRoute
   '/app/datasets': typeof AppDatasetsRouteWithChildren
   '/app/': typeof AppIndexRoute
   '/app/datasets/$id': typeof AppDatasetsIdRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/signup'
+    | '/app/chat'
     | '/app/datasets'
     | '/app/'
     | '/app/datasets/$id'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/signup'
+    | '/app/chat'
     | '/app/datasets'
     | '/app'
     | '/app/datasets/$id'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/signup'
+    | '/app/chat'
     | '/app/datasets'
     | '/app/'
     | '/app/datasets/$id'
@@ -172,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDatasetsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/chat': {
+      id: '/app/chat'
+      path: '/chat'
+      fullPath: '/app/chat'
+      preLoaderRoute: typeof AppChatRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/datasets/new': {
       id: '/app/datasets/new'
       path: '/new'
@@ -204,11 +223,13 @@ const AppDatasetsRouteWithChildren = AppDatasetsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppChatRoute: typeof AppChatRoute
   AppDatasetsRoute: typeof AppDatasetsRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppChatRoute: AppChatRoute,
   AppDatasetsRoute: AppDatasetsRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }
@@ -224,3 +245,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
