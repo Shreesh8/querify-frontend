@@ -17,7 +17,7 @@ export const profileDataset = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: ds } = await supabase
       .from("datasets")
-      .select("id,name,storage_path,row_count,col_count")
+      .select("id,name,storage_path,row_count")
       .eq("id", data.datasetId)
       .single();
     const { data: cols } = await supabase
@@ -28,8 +28,8 @@ export const profileDataset = createServerFn({ method: "POST" })
 
     if (isFastApiConfigured() && ds?.storage_path) {
       try {
-        const profile = await fastapi<{
-          summary: Record<string, unknown>;
+      const profile = await fastapi<{
+          summary: Record<string, string | number>;
           correlations: Array<{ a: string; b: string; r: number }>;
           outliers: Array<{ column: string; count: number }>;
         }>({
@@ -45,7 +45,7 @@ export const profileDataset = createServerFn({ method: "POST" })
 
     return {
       profile: {
-        summary: { rows: ds?.row_count ?? 0, columns: ds?.col_count ?? 0 },
+        summary: { rows: ds?.row_count ?? 0, columns: cols?.length ?? 0 } as Record<string, number>,
         correlations: [],
         outliers: [],
       },
@@ -63,7 +63,7 @@ export const generateInsights = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: ds } = await supabase
       .from("datasets")
-      .select("id,name,storage_path,schema,row_count")
+      .select("id,name,storage_path,schema,row_count,col_count")
       .eq("id", data.datasetId)
       .single();
 
@@ -88,7 +88,7 @@ export const generateInsights = createServerFn({ method: "POST" })
         {
           type: "overview",
           title: "Dataset ready for analysis",
-          body: `Loaded ${ds?.row_count ?? 0} rows across ${ds?.col_count ?? 0} columns. Configure your FastAPI service to unlock AI insights.`,
+          body: `Loaded ${ds?.row_count ?? 0} rows. Configure your FastAPI service to unlock AI insights.`,
           severity: "info",
         },
       ];

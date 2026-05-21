@@ -98,7 +98,7 @@ export const sendMessage = createServerFn({ method: "POST" })
     const { data: ds } = await supabase
       .from("datasets")
       .select("id,name,storage_path,schema")
-      .eq("id", conv.dataset_id)
+      .eq("id", conv.dataset_id as string)
       .single();
 
     let assistantText = "AI service is not configured yet. Deploy your FastAPI backend and set FASTAPI_BASE_URL to enable natural-language querying.";
@@ -138,8 +138,8 @@ export const sendMessage = createServerFn({ method: "POST" })
         user_id: userId,
         role: "assistant",
         content: assistantText,
-        chart_spec: chartSpec,
-        tool_calls: toolCalls,
+        chart_spec: chartSpec as never,
+        tool_calls: toolCalls as never,
       })
       .select()
       .single();
