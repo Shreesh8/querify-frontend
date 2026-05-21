@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppForecastRouteImport } from './routes/app/forecast'
 import { Route as AppDatasetsRouteImport } from './routes/app/datasets'
 import { Route as AppChatRouteImport } from './routes/app/chat'
 import { Route as AppDatasetsNewRouteImport } from './routes/app/datasets.new'
@@ -44,6 +45,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppForecastRoute = AppForecastRouteImport.update({
+  id: '/forecast',
+  path: '/forecast',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDatasetsRoute = AppDatasetsRouteImport.update({
   id: '/datasets',
   path: '/datasets',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/app/chat': typeof AppChatRoute
   '/app/datasets': typeof AppDatasetsRouteWithChildren
+  '/app/forecast': typeof AppForecastRoute
   '/app/': typeof AppIndexRoute
   '/app/datasets/$id': typeof AppDatasetsIdRoute
   '/app/datasets/new': typeof AppDatasetsNewRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/app/chat': typeof AppChatRoute
   '/app/datasets': typeof AppDatasetsRouteWithChildren
+  '/app/forecast': typeof AppForecastRoute
   '/app': typeof AppIndexRoute
   '/app/datasets/$id': typeof AppDatasetsIdRoute
   '/app/datasets/new': typeof AppDatasetsNewRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/app/chat': typeof AppChatRoute
   '/app/datasets': typeof AppDatasetsRouteWithChildren
+  '/app/forecast': typeof AppForecastRoute
   '/app/': typeof AppIndexRoute
   '/app/datasets/$id': typeof AppDatasetsIdRoute
   '/app/datasets/new': typeof AppDatasetsNewRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/app/chat'
     | '/app/datasets'
+    | '/app/forecast'
     | '/app/'
     | '/app/datasets/$id'
     | '/app/datasets/new'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/app/chat'
     | '/app/datasets'
+    | '/app/forecast'
     | '/app'
     | '/app/datasets/$id'
     | '/app/datasets/new'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/app/chat'
     | '/app/datasets'
+    | '/app/forecast'
     | '/app/'
     | '/app/datasets/$id'
     | '/app/datasets/new'
@@ -175,6 +187,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/forecast': {
+      id: '/app/forecast'
+      path: '/forecast'
+      fullPath: '/app/forecast'
+      preLoaderRoute: typeof AppForecastRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/datasets': {
@@ -225,12 +244,14 @@ const AppDatasetsRouteWithChildren = AppDatasetsRoute._addFileChildren(
 interface AppRouteChildren {
   AppChatRoute: typeof AppChatRoute
   AppDatasetsRoute: typeof AppDatasetsRouteWithChildren
+  AppForecastRoute: typeof AppForecastRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppChatRoute: AppChatRoute,
   AppDatasetsRoute: AppDatasetsRouteWithChildren,
+  AppForecastRoute: AppForecastRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
