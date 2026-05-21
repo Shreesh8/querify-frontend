@@ -14,7 +14,362 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      charts: {
+        Row: {
+          created_at: string
+          dashboard_id: string
+          id: string
+          position: Json | null
+          spec: Json
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dashboard_id: string
+          id?: string
+          position?: Json | null
+          spec?: Json
+          title?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dashboard_id?: string
+          id?: string
+          position?: Json | null
+          spec?: Json
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "charts_dashboard_id_fkey"
+            columns: ["dashboard_id"]
+            isOneToOne: false
+            referencedRelation: "dashboards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          dataset_id: string | null
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dataset_id?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dataset_id?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dashboards: {
+        Row: {
+          created_at: string
+          dataset_id: string | null
+          id: string
+          layout: Json | null
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dataset_id?: string | null
+          id?: string
+          layout?: Json | null
+          name?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dataset_id?: string | null
+          id?: string
+          layout?: Json | null
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dashboards_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dataset_columns: {
+        Row: {
+          created_at: string
+          dataset_id: string
+          dtype: string
+          id: string
+          name: string
+          null_pct: number | null
+          position: number
+          stats: Json | null
+          unique_count: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dataset_id: string
+          dtype: string
+          id?: string
+          name: string
+          null_pct?: number | null
+          position?: number
+          stats?: Json | null
+          unique_count?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dataset_id?: string
+          dtype?: string
+          id?: string
+          name?: string
+          null_pct?: number | null
+          position?: number
+          stats?: Json | null
+          unique_count?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dataset_columns_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      datasets: {
+        Row: {
+          col_count: number | null
+          created_at: string
+          id: string
+          name: string
+          row_count: number | null
+          schema: Json | null
+          source_filename: string | null
+          status: string
+          storage_path: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          col_count?: number | null
+          created_at?: string
+          id?: string
+          name: string
+          row_count?: number | null
+          schema?: Json | null
+          source_filename?: string | null
+          status?: string
+          storage_path?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          col_count?: number | null
+          created_at?: string
+          id?: string
+          name?: string
+          row_count?: number | null
+          schema?: Json | null
+          source_filename?: string | null
+          status?: string
+          storage_path?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      forecasts: {
+        Row: {
+          created_at: string
+          dataset_id: string
+          horizon: number
+          id: string
+          method: string
+          result: Json | null
+          target_col: string
+          time_col: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dataset_id: string
+          horizon?: number
+          id?: string
+          method?: string
+          result?: Json | null
+          target_col: string
+          time_col?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dataset_id?: string
+          horizon?: number
+          id?: string
+          method?: string
+          result?: Json | null
+          target_col?: string
+          time_col?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forecasts_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insights: {
+        Row: {
+          body: string | null
+          created_at: string
+          dataset_id: string
+          id: string
+          payload: Json | null
+          severity: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          dataset_id: string
+          id?: string
+          payload?: Json | null
+          severity?: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          dataset_id?: string
+          id?: string
+          payload?: Json | null
+          severity?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insights_dataset_id_fkey"
+            columns: ["dataset_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          chart_spec: Json | null
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+          tool_calls: Json | null
+          user_id: string
+        }
+        Insert: {
+          chart_spec?: Json | null
+          content?: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+          tool_calls?: Json | null
+          user_id: string
+        }
+        Update: {
+          chart_spec?: Json | null
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          tool_calls?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
