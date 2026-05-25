@@ -1,14 +1,13 @@
 import { createFileRoute, Outlet, redirect, Link } from "@tanstack/react-router";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { supabase } from "@/integrations/supabase/client";
+import { isAuthenticated } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async ({ location }) => {
-    const { data } = await supabase.auth.getSession();
-    if (!data.session) {
+    if (!isAuthenticated()) {
       throw redirect({ to: "/login", search: { redirect: location.href } });
     }
   },
@@ -25,7 +24,7 @@ function AppLayout() {
             <div className="flex items-center gap-2">
               <SidebarTrigger />
               <span className="text-xs text-muted-foreground hidden sm:inline">
-                Premium AI Business Intelligence
+                AI Business Intelligence
               </span>
             </div>
             <Button size="sm" asChild className="bg-gradient-to-r from-primary to-accent-violet text-primary-foreground shadow-glow">

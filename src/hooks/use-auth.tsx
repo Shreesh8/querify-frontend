@@ -1,24 +1,35 @@
-import { useEffect, useState } from "react";
-import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
+import { isAuthenticated, clearToken } from "@/lib/api";
+
+export type User = {
+  id: string;
+  email: string;
+};
 
 export function useAuth() {
-  const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-    });
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-    });
-    return () => subscription.unsubscribe();
+    if (isAuthenticated()) {
+      // Decode user from JWT token
+      const token = localStorage.getItem("querify_token");
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          setUser({ id: payload.sub, email: payload.email ?? "" });
+        } catch {
+          clearToken();
+        }
+      }
+    }
+    setLoading(false);
   }, []);
 
-  return { session, user, loading };
+  const signOut = () => {
+    clearToken();
+    window.location.href = "/login";
+  };
+
+  return { user, loading, isAuthenticated: isAuthenticated(), signOut };
 }

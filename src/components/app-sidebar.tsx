@@ -48,7 +48,7 @@ export function AppSidebar() {
           {!collapsed && (
             <div className="flex flex-col leading-tight">
               <span className="font-display text-sm font-semibold tracking-tight">
-                Insightly
+                Querify
               </span>
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 AI BI Platform
