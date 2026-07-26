@@ -18,8 +18,10 @@ import { Route as AppForecastRouteImport } from './routes/app/forecast'
 import { Route as AppDatasetsRouteImport } from './routes/app/datasets'
 import { Route as AppDashboardsRouteImport } from './routes/app/dashboards'
 import { Route as AppChatRouteImport } from './routes/app/chat'
+import { Route as AppChartInsightRouteImport } from './routes/app/chart-insight'
 import { Route as AppDatasetsNewRouteImport } from './routes/app/datasets.new'
 import { Route as AppDatasetsIdRouteImport } from './routes/app/datasets.$id'
+import { Route as AppDashboardsIdRouteImport } from './routes/app/dashboards.$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -66,6 +68,11 @@ const AppChatRoute = AppChatRouteImport.update({
   path: '/chat',
   getParentRoute: () => AppRoute,
 } as any)
+const AppChartInsightRoute = AppChartInsightRouteImport.update({
+  id: '/chart-insight',
+  path: '/chart-insight',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDatasetsNewRoute = AppDatasetsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -76,17 +83,24 @@ const AppDatasetsIdRoute = AppDatasetsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppDatasetsRoute,
 } as any)
+const AppDashboardsIdRoute = AppDashboardsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppDashboardsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/app/chart-insight': typeof AppChartInsightRoute
   '/app/chat': typeof AppChatRoute
-  '/app/dashboards': typeof AppDashboardsRoute
+  '/app/dashboards': typeof AppDashboardsRouteWithChildren
   '/app/datasets': typeof AppDatasetsRouteWithChildren
   '/app/forecast': typeof AppForecastRoute
   '/app/': typeof AppIndexRoute
+  '/app/dashboards/$id': typeof AppDashboardsIdRoute
   '/app/datasets/$id': typeof AppDatasetsIdRoute
   '/app/datasets/new': typeof AppDatasetsNewRoute
 }
@@ -94,11 +108,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/app/chart-insight': typeof AppChartInsightRoute
   '/app/chat': typeof AppChatRoute
-  '/app/dashboards': typeof AppDashboardsRoute
+  '/app/dashboards': typeof AppDashboardsRouteWithChildren
   '/app/datasets': typeof AppDatasetsRouteWithChildren
   '/app/forecast': typeof AppForecastRoute
   '/app': typeof AppIndexRoute
+  '/app/dashboards/$id': typeof AppDashboardsIdRoute
   '/app/datasets/$id': typeof AppDatasetsIdRoute
   '/app/datasets/new': typeof AppDatasetsNewRoute
 }
@@ -108,11 +124,13 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/app/chart-insight': typeof AppChartInsightRoute
   '/app/chat': typeof AppChatRoute
-  '/app/dashboards': typeof AppDashboardsRoute
+  '/app/dashboards': typeof AppDashboardsRouteWithChildren
   '/app/datasets': typeof AppDatasetsRouteWithChildren
   '/app/forecast': typeof AppForecastRoute
   '/app/': typeof AppIndexRoute
+  '/app/dashboards/$id': typeof AppDashboardsIdRoute
   '/app/datasets/$id': typeof AppDatasetsIdRoute
   '/app/datasets/new': typeof AppDatasetsNewRoute
 }
@@ -123,11 +141,13 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/signup'
+    | '/app/chart-insight'
     | '/app/chat'
     | '/app/dashboards'
     | '/app/datasets'
     | '/app/forecast'
     | '/app/'
+    | '/app/dashboards/$id'
     | '/app/datasets/$id'
     | '/app/datasets/new'
   fileRoutesByTo: FileRoutesByTo
@@ -135,11 +155,13 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/signup'
+    | '/app/chart-insight'
     | '/app/chat'
     | '/app/dashboards'
     | '/app/datasets'
     | '/app/forecast'
     | '/app'
+    | '/app/dashboards/$id'
     | '/app/datasets/$id'
     | '/app/datasets/new'
   id:
@@ -148,11 +170,13 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/signup'
+    | '/app/chart-insight'
     | '/app/chat'
     | '/app/dashboards'
     | '/app/datasets'
     | '/app/forecast'
     | '/app/'
+    | '/app/dashboards/$id'
     | '/app/datasets/$id'
     | '/app/datasets/new'
   fileRoutesById: FileRoutesById
@@ -229,6 +253,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppChatRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/chart-insight': {
+      id: '/app/chart-insight'
+      path: '/chart-insight'
+      fullPath: '/app/chart-insight'
+      preLoaderRoute: typeof AppChartInsightRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/datasets/new': {
       id: '/app/datasets/new'
       path: '/new'
@@ -243,8 +274,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDatasetsIdRouteImport
       parentRoute: typeof AppDatasetsRoute
     }
+    '/app/dashboards/$id': {
+      id: '/app/dashboards/$id'
+      path: '/$id'
+      fullPath: '/app/dashboards/$id'
+      preLoaderRoute: typeof AppDashboardsIdRouteImport
+      parentRoute: typeof AppDashboardsRoute
+    }
   }
 }
+
+interface AppDashboardsRouteChildren {
+  AppDashboardsIdRoute: typeof AppDashboardsIdRoute
+}
+
+const AppDashboardsRouteChildren: AppDashboardsRouteChildren = {
+  AppDashboardsIdRoute: AppDashboardsIdRoute,
+}
+
+const AppDashboardsRouteWithChildren = AppDashboardsRoute._addFileChildren(
+  AppDashboardsRouteChildren,
+)
 
 interface AppDatasetsRouteChildren {
   AppDatasetsIdRoute: typeof AppDatasetsIdRoute
@@ -261,16 +311,18 @@ const AppDatasetsRouteWithChildren = AppDatasetsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppChartInsightRoute: typeof AppChartInsightRoute
   AppChatRoute: typeof AppChatRoute
-  AppDashboardsRoute: typeof AppDashboardsRoute
+  AppDashboardsRoute: typeof AppDashboardsRouteWithChildren
   AppDatasetsRoute: typeof AppDatasetsRouteWithChildren
   AppForecastRoute: typeof AppForecastRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppChartInsightRoute: AppChartInsightRoute,
   AppChatRoute: AppChatRoute,
-  AppDashboardsRoute: AppDashboardsRoute,
+  AppDashboardsRoute: AppDashboardsRouteWithChildren,
   AppDatasetsRoute: AppDatasetsRouteWithChildren,
   AppForecastRoute: AppForecastRoute,
   AppIndexRoute: AppIndexRoute,

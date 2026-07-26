@@ -1,24 +1,28 @@
-/**
- * src/lib/api.ts
- * Central API client pointing to the Querify FastAPI backend.
- */
+import { auth } from "@/lib/firebase";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://13.206.197.174:8000";
 
-function getToken(): string | null {
-  return localStorage.getItem("querify_token");
-}
-
-export function setToken(token: string): void {
-  localStorage.setItem("querify_token", token);
-}
-
-export function clearToken(): void {
-  localStorage.removeItem("querify_token");
+async function getToken(): Promise<string | null> {
+  return new Promise((resolve) => {
+    // Wait for auth to initialize
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      unsubscribe();
+      if (!user) {
+        resolve(null);
+        return;
+      }
+      try {
+        const token = await user.getIdToken();
+        resolve(token);
+      } catch {
+        resolve(null);
+      }
+    });
+  });
 }
 
 export function isAuthenticated(): boolean {
-  return !!getToken();
+  return !!auth.currentUser || (typeof window !== "undefined" && !!localStorage.getItem("querify_authed"));
 }
 
 type RequestOpts = {
@@ -29,7 +33,7 @@ type RequestOpts = {
 };
 
 export async function api<T = unknown>(opts: RequestOpts): Promise<T> {
-  const token = getToken();
+  const token = await getToken();
   const headers: Record<string, string> = {};
 
   if (!opts.isFormData) {
@@ -54,20 +58,10 @@ export async function api<T = unknown>(opts: RequestOpts): Promise<T> {
     throw new Error(err.error ?? err.detail ?? "Request failed");
   }
 
+  if (res.status === 204 || res.headers.get("content-length") === "0") return undefined as T;
   return res.json() as Promise<T>;
 }
 
-// ── Auth ──────────────────────────────────────────────────────
-export const authApi = {
-  login: (email: string, password: string) =>
-    api<{ access_token: string }>({
-      method: "POST",
-      path: "/api/v1/auth/login",
-      body: { email, password },
-    }),
-};
-
-// ── Datasets ──────────────────────────────────────────────────
 export const datasetsApi = {
   upload: (file: File, name: string) => {
     const form = new FormData();
@@ -80,35 +74,37 @@ export const datasetsApi = {
       isFormData: true,
     });
   },
-  list: () => api<{ id: string; name: string; row_count: number; created_at: string }[]>({
-    path: "/api/v1/datasets/",
-  }),
-  get: (id: string) => api({ path: `/api/v1/datasets/${id}` }),
-  preview: (id: string) => api({ path: `/api/v1/datasets/${id}/preview` }),
-  delete: (id: string) => api({ method: "DELETE", path: `/api/v1/datasets/${id}` }),
+  list: () => api<any[]>({ path: "/api/v1/datasets/" }),
+  get: (id: string) => api<any>({ path: `/api/v1/datasets/${id}` }),
+  preview: (id: string) => api<any>({ path: `/api/v1/datasets/${id}/preview` }),
+  delete: (id: string) => api<any>({ method: "DELETE", path: `/api/v1/datasets/${id}` }),
 };
 
-// ── Analytics ─────────────────────────────────────────────────
 export const analyticsApi = {
-  get: (datasetId: string) => api({ path: `/api/v1/analytics/${datasetId}` }),
+  get: (datasetId: string) => api<any>({ path: `/api/v1/analytics/${datasetId}` }),
 };
 
-// ── Chat ──────────────────────────────────────────────────────
+export const suggestionsApi = {
+  get: (datasetId: string) => api<{ suggestions: string[] }>({ path: `/api/v1/chat/suggestions/${datasetId}` }),
+};
+
+export const billingApi = {
+  getUsage: () => api<any>({ path: "/api/v1/billing/usage" }),
+};
+
 export const chatApi = {
   query: (datasetId: string, question: string) =>
-    api<{ answer: string; result_data: unknown; execution_time_ms: number }>({
+    api<{ answer: string; result_data: any; execution_time_ms: number }>({
       method: "POST",
       path: "/api/v1/chat/query",
       body: { dataset_id: datasetId, question },
     }),
 };
 
-// ── Insights ──────────────────────────────────────────────────
 export const insightsApi = {
-  get: (datasetId: string) => api({ path: `/api/v1/insights/${datasetId}` }),
+  get: (datasetId: string) => api<any>({ path: `/api/v1/insights/${datasetId}` }),
 };
 
-// ── Forecast ──────────────────────────────────────────────────
 export const forecastApi = {
   generate: (payload: {
     dataset_id: string;
@@ -116,5 +112,5 @@ export const forecastApi = {
     target_column: string;
     periods: number;
     frequency: string;
-  }) => api({ method: "POST", path: "/api/v1/forecast/generate", body: payload }),
+  }) => api<any>({ method: "POST", path: "/api/v1/forecast/generate", body: payload }),
 };

@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { listDatasets } from "@/lib/datasets.functions";
+import { datasetsApi } from "@/lib/api";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Database, MessageSquare, TrendingUp, Plus, Sparkles, ArrowUpRight } from "lucide-react";
@@ -11,10 +10,12 @@ export const Route = createFileRoute("/app/")({
 });
 
 function OverviewPage() {
-  const fn = useServerFn(listDatasets);
-  const { data } = useQuery({ queryKey: ["datasets"], queryFn: () => fn() });
-  const datasets = data?.datasets ?? [];
-  const totalRows = datasets.reduce((s, d) => s + (d.row_count ?? 0), 0);
+  const { data: datasets = [] } = useQuery({
+    queryKey: ["datasets"],
+    queryFn: () => datasetsApi.list(),
+  });
+
+  const totalRows = datasets.reduce((s: number, d: any) => s + (d.row_count ?? 0), 0);
 
   const stats = [
     { label: "Datasets", value: datasets.length, icon: Database },
@@ -56,16 +57,12 @@ function OverviewPage() {
             </Button>
           </div>
           <div className="mt-4 divide-y divide-glass-border">
-            {datasets.slice(0, 5).map((d) => (
-              <Link
-                key={d.id}
-                to="/app/datasets/$id"
-                params={{ id: d.id }}
-                className="flex items-center justify-between py-3 hover:bg-white/[0.02] rounded px-2 -mx-2"
-              >
+            {datasets.slice(0, 5).map((d: any) => (
+              <Link key={d.id} to="/app/datasets/$id" params={{ id: d.id }}
+                className="flex items-center justify-between py-3 hover:bg-white/[0.02] rounded px-2 -mx-2">
                 <div>
                   <div className="font-medium text-sm">{d.name}</div>
-                  <div className="text-xs text-muted-foreground">{d.row_count?.toLocaleString()} rows · {d.col_count} cols</div>
+                  <div className="text-xs text-muted-foreground">{d.row_count?.toLocaleString()} rows</div>
                 </div>
                 <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
               </Link>

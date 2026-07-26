@@ -1,11 +1,12 @@
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
+import { signInWithEmail, signInWithGoogle } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { setToken, isAuthenticated } from "@/lib/api";
+import { isAuthenticated } from "@/lib/api";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -28,25 +29,21 @@ function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL ?? "http://13.206.197.174:8000"}/api/v1/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail ?? "Login failed");
-      }
-      const data = await res.json();
-      setToken(data.access_token);
+      await signInWithEmail(email, password);
       navigate({ to: search.redirect });
-    } catch (err) {
+    } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Login failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    try {
+      await signInWithGoogle();
+      navigate({ to: search.redirect });
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Google sign-in failed");
     }
   };
 
@@ -60,6 +57,16 @@ function LoginPage() {
           </div>
           <h1 className="font-display text-2xl font-semibold tracking-tight">Welcome back</h1>
           <p className="mt-1 text-sm text-muted-foreground">Sign in to your Querify workspace</p>
+        </div>
+        <Button variant="outline" className="w-full" onClick={handleGoogle}>
+          <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M21.35 11.1H12v3.2h5.35c-.23 1.4-1.6 4.1-5.35 4.1-3.22 0-5.85-2.67-5.85-5.95s2.63-5.95 5.85-5.95c1.83 0 3.05.78 3.75 1.45l2.55-2.46C16.65 4.18 14.55 3.3 12 3.3 6.96 3.3 2.85 7.4 2.85 12.45S6.96 21.6 12 21.6c6.93 0 9.15-4.86 9.15-7.4 0-.5-.05-.88-.13-1.1z"/>
+          </svg>
+          Continue with Google
+        </Button>
+        <div className="relative my-6 text-center text-xs text-muted-foreground">
+          <div className="absolute inset-y-1/2 left-0 right-0 border-t border-glass-border" />
+          <span className="relative bg-glass px-2">or with email</span>
         </div>
         <form className="space-y-4" onSubmit={handleEmail}>
           <div>

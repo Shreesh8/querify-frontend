@@ -1,3 +1,5 @@
+import { lazy, Suspense } from "react";
+const LazyUsageMeter = lazy(() => import("@/components/UsageMeter").then(m => ({ default: m.UsageMeter })));
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
@@ -88,12 +90,13 @@ export function AppSidebar() {
             {user.email}
           </div>
         )}
+        {!collapsed && <Suspense fallback={null}><LazyUsageMeter /></Suspense>}
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={async () => {
-                await supabase.auth.signOut();
-                window.location.href = "/login";
+                
+                import("@/lib/firebase").then(({ logOut }) => logOut()).finally(() => { window.location.href = "/"; });
               }}
             >
               <LogOut className="h-4 w-4" />

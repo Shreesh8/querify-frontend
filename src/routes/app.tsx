@@ -1,15 +1,21 @@
 import { createFileRoute, Outlet, redirect, Link } from "@tanstack/react-router";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { isAuthenticated } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { auth } from "@/lib/firebase";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async ({ location }) => {
-    if (!isAuthenticated()) {
-      throw redirect({ to: "/login", search: { redirect: location.href } });
-    }
+    await new Promise<void>((resolve) => {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        unsubscribe();
+        resolve();
+        if (!user) {
+          throw redirect({ to: "/login", search: { redirect: location.href } });
+        }
+      });
+    });
   },
   component: AppLayout,
 });

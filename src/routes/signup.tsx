@@ -1,17 +1,16 @@
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+import { signUpWithEmail, signInWithGoogle } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { isAuthenticated } from "@/lib/api";
 
 export const Route = createFileRoute("/signup")({
   beforeLoad: async () => {
-    const { data } = await supabase.auth.getSession();
-    if (data.session) throw redirect({ to: "/app" });
+    if (isAuthenticated()) throw redirect({ to: "/app" });
   },
   component: SignupPage,
 });
@@ -26,25 +25,24 @@ function SignupPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/app`,
-        data: { display_name: name },
-      },
-    });
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Check your email to confirm your account");
-    navigate({ to: "/login", search: { redirect: "/app" } });
+    try {
+      await signUpWithEmail(email, password);
+      toast.success("Account created! Welcome to Querify.");
+      navigate({ to: "/app" });
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Signup failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogle = async () => {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/app",
-    });
-    if (result.error) toast.error(result.error.message);
+    try {
+      await signInWithGoogle();
+      navigate({ to: "/app" });
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Google sign-in failed");
+    }
   };
 
   return (
@@ -59,6 +57,9 @@ function SignupPage() {
           <p className="mt-1 text-sm text-muted-foreground">Start analyzing your data in minutes</p>
         </div>
         <Button variant="outline" className="w-full" onClick={handleGoogle}>
+          <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M21.35 11.1H12v3.2h5.35c-.23 1.4-1.6 4.1-5.35 4.1-3.22 0-5.85-2.67-5.85-5.95s2.63-5.95 5.85-5.95c1.83 0 3.05.78 3.75 1.45l2.55-2.46C16.65 4.18 14.55 3.3 12 3.3 6.96 3.3 2.85 7.4 2.85 12.45S6.96 21.6 12 21.6c6.93 0 9.15-4.86 9.15-7.4 0-.5-.05-.88-.13-1.1z"/>
+          </svg>
           Continue with Google
         </Button>
         <div className="relative my-6 text-center text-xs text-muted-foreground">

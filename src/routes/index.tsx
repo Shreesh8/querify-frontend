@@ -78,7 +78,7 @@ function Index() {
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-glass-border bg-glass px-3 py-1 text-xs text-muted-foreground backdrop-blur">
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            Powered by Gemini AI + Prophet Forecasting
+            Powered by Groq AI + Prophet Forecasting
           </div>
           <h1 className="mt-6 font-display text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.05]">
             Talk to your data.
@@ -181,7 +181,7 @@ function Index() {
             {
               icon: Brain,
               t: "AI insights",
-              d: "Anomaly detection, correlation discovery, segment analysis — all narrated by Gemini.",
+              d: "Anomaly detection, correlation discovery, segment analysis — all narrated by Groq AI.",
             },
             {
               icon: Sparkles,
