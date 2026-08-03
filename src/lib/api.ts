@@ -1,6 +1,6 @@
 import { auth } from "@/lib/firebase";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://13.206.197.174:8000";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "https://api.querify.site";
 
 async function getToken(): Promise<string | null> {
   return new Promise((resolve) => {
