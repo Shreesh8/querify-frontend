@@ -18,7 +18,10 @@ function ChartInsightPage() {
 
   useEffect(() => {
     const stored = sessionStorage.getItem("querify_chart_insight");
-    if (!stored) { navigate({ to: "/app/dashboards" }); return; }
+    if (!stored) {
+      navigate({ to: "/app/dashboards" });
+      return;
+    }
     const { chart, title: t } = JSON.parse(stored);
     setChartData(chart);
     setTitle(t);
@@ -28,14 +31,18 @@ function ChartInsightPage() {
   async function fetchInsight(chart: any, t: string) {
     setLoading(true);
     try {
-      const summary = chart.type === "pie"
-        ? `Pie chart of ${chart.labels?.slice(0, 5).join(", ")} with values ${chart.values?.slice(0, 5).join(", ")}`
-        : `${chart.type} chart: ${chart.x_label} vs ${chart.y_label}. Top values: ${chart.x?.slice(0, 5).map((x: any, i: number) => `${x}=${chart.y?.[i]}`).join(", ")}`;
-      const token = await auth.currentUser?.getIdToken() ?? null;
-      const base = (import.meta as any).env?.VITE_API_URL ?? "http://13.206.197.174:8000";
+      const summary =
+        chart.type === "pie"
+          ? `Pie chart of ${chart.labels?.slice(0, 5).join(", ")} with values ${chart.values?.slice(0, 5).join(", ")}`
+          : `${chart.type} chart: ${chart.x_label} vs ${chart.y_label}. Top values: ${chart.x
+              ?.slice(0, 5)
+              .map((x: any, i: number) => `${x}=${chart.y?.[i]}`)
+              .join(", ")}`;
+      const token = (await auth.currentUser?.getIdToken()) ?? null;
+      const base = (import.meta as any).env?.VITE_API_BASE_URL ?? "https://api.querify.site";
       const res = await fetch(`${base}/api/v1/chat/chart-insight`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ title: t, summary }),
       });
       const data = await res.json();
@@ -51,8 +58,10 @@ function ChartInsightPage() {
 
   return (
     <div className="mx-auto max-w-5xl p-6 lg:p-10 space-y-6">
-      <button onClick={() => navigate({ to: "/app/dashboards" })}
-        className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition">
+      <button
+        onClick={() => navigate({ to: "/app/dashboards" })}
+        className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition"
+      >
         <ArrowLeft className="h-3 w-3" /> Back to Dashboards
       </button>
 
